@@ -5,7 +5,7 @@ import Browser
 import Html exposing (Html, button, div, p, table, td, text, tr)
 import Html.Attributes exposing (style)
 import Html.Events exposing (onClick)
-import String exposing (fromChar)http://localhost:8000
+import String exposing (fromChar)
 
 
 type alias Model =

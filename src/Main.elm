@@ -1,21 +1,31 @@
-import Html exposing (Main)
+import String exposing (fromChar)
+import Html.Attributes exposing (style)
+import Html exposing (Html, button, div, p, table, td, text, tr)
 
 
 -- MODEL
 
 type alias Model = 
-    { board: List Char}
+    { board : List Char
+    , level : Int }
+
+initialModel : Model
+initialModel =
+    { level = 1}
 
 -- UPDATE
 
-type MZ
-    = Zeigen
-
+type Msg
+    = ShowPattern
+    | IncreaseDifficulty
 
 update : Msg -> Model -> Model
-update msg MZ =
-  case msg of
-    
+update msg model =
+    case msg of
+        ShowPattern ->
+
+        IncreaseDifficulty ->
+            { model | level = model.level + 1 }
 
 
 -- VIEW
@@ -23,6 +33,8 @@ update msg MZ =
 view : Model -> Html Msg
 view model =
     div []
-        [ text "Merke dir das folgende Muster:"]
-        ,p [] []
-        ,
+        [ text "Merke dir das folgende Muster:"
+        , p [] []
+        , ul [1,2,3,4]
+        , p [] []
+        ]
