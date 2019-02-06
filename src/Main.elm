@@ -1,31 +1,53 @@
+module Main exposing (..)
+
+import Browser
 import String exposing (fromChar)
 import Html.Attributes exposing (style)
 import Html exposing (Html, button, div, p, table, td, text, tr)
-
+import Random exposing (int)
 
 -- MODEL
 
 type alias Model = 
-    { board : List Char
-    , level : Int }
+    { difficulty : Int
+    , pattern : List Int }
 
 initialModel : Model
 initialModel =
-    { level = 1}
+    { difficulty = 1
+    , pattern = []}
+    
+
+init : () -> (Model, Cmd Msg)
+init _ =
+  ( initialModel
+  , Cmd.none
+  )
 
 -- UPDATE
 
 type Msg
-    = ShowPattern
+    = Roll
+    | GeneratePattern (List Int)
     | IncreaseDifficulty
 
-update : Msg -> Model -> Model
-update msg model =
-    case msg of
-        ShowPattern ->
 
-        IncreaseDifficulty ->
-            { model | level = model.level + 1 }
+update : Msg -> Model -> (Model, Cmd Msg)
+update msg model =
+  case msg of
+    Roll ->
+      ( model
+      , Random.generate GeneratePattern (Random.list 10 ( Random.int 1 6))
+      )
+    GeneratePattern newpattern ->
+     ( { model | pattern = newpattern }, Cmd.none)
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+  Sub.none
 
 
 -- VIEW
@@ -35,6 +57,17 @@ view model =
     div []
         [ text "Merke dir das folgende Muster:"
         , p [] []
-        , ul [1,2,3,4]
+        , text <| string.fromInt
         , p [] []
+        , button [ onClick Roll ] [ text "Roll" ]
         ]
+
+-- MAIN
+main : Program () Model Msg
+main =
+    Browser.element
+        { init = init
+        , view = view
+        , update = update
+        , subscriptions = subscriptions
+        }
