@@ -1,7 +1,7 @@
 div {
     height: 200px;
     width: 400px;
-    background: black;
+    background: blue;
 
     position: fixed;
     top: 50%;
@@ -12,5 +12,5 @@ div {
 
 p {
     font-family: "Times New Roman", Times, serif;
-    font-size: 100px
+    font-size: 50px;
 }
