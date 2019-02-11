@@ -22,8 +22,7 @@ initialModel =
 init : () -> (Model, Cmd Msg)
 init _ =
   ( initialModel
-  , Cmd.none
-  )
+  , Cmd.none )
 
 -- UPDATE
 
@@ -31,6 +30,7 @@ type Msg
     = Roll
     | GeneratePattern (List Int)
     | IncreaseDifficulty
+    | AskforPattern
     
 
 
@@ -38,14 +38,16 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     Roll ->
-      ( model
-      , Random.generate GeneratePattern (Random.list model.difficulty ( Random.int 0 9))
-      )
+      ( model, Random.generate GeneratePattern (Random.list model.difficulty ( Random.int 0 9)))
     GeneratePattern newpattern ->
-     ( { model | pattern = newpattern }, Cmd.none)
+        ( { model | pattern = newpattern }, Cmd.none)
     IncreaseDifficulty ->
-     ( { model | difficulty = model.difficulty + 1}, Cmd.none)
-    
+        ( { model | difficulty = model.difficulty + 1}, Cmd.none)
+    AskforPattern ->
+        
+
+     
+      
 
 -- SUBSCRIPTIONS
 
