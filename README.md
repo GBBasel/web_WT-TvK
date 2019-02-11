@@ -1,5 +1,5 @@
 # littlebit-of-big-bamboozled-BOT-bootcamp
-A littlebit of the crazy story in the bootcamp of our friend, the big bamboozled BOT.
+[A littlebit of the crazy story in the bootcamp of our friend, the big bamboozled BOT.](https://gbbasel.github.io/littlebit-of-big-bamboozled-BOT-bootcamp/)
 
 ## Ziele
 ### Homescreen
