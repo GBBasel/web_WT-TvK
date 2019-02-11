@@ -12,11 +12,11 @@
 
 ### 3 Spielmodi:  
 #### ~~Ausweichen~~  
-  ~~Objekte fallen runter und denen sollte man ausweichen~~  
+~~Objekte fallen runter und denen sollte man ausweichen~~  
 #### Intelligenzspiel  
-  Rechnen und Muster merken  
+Rechnen und Muster merken  
 #### ~~Angriff~~  
-  ~~Tasten schnell mehrmals drücken evtl. Kombinationen~~  
+~~Tasten schnell mehrmals drücken evtl. Kombinationen~~  
   
 ### Zwischenziele  
 KW 6: -Webseite startet/ist erreichbar  
