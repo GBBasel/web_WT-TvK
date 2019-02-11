@@ -32,12 +32,6 @@ KW 9: -fertigstellen...
   
   
 
-
-
-
-
-
-
-Notizen
+##### Notizen
 Etwas in der Mitte des Browsers darstellen:
 https://stackoverflow.com/questions/11093603/how-to-set-page-content-to-the-middle-of-screen
