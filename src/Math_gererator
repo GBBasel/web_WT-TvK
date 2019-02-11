@@ -6,17 +6,19 @@ import Html.Attributes exposing (style)
 import Html.Events exposing (..)
 import Html exposing (Html, button, div, p, table, td, text, tr)
 import Random exposing (int)
+import Array exposing (Array, get, repeat, set)
 
 -- MODEL
 
 type alias Model = 
     { difficulty : Int
-    , pattern : List Int }
+    , pattern : Array Int }
 
 initialModel : Model
 initialModel =
     { difficulty = 1
-    , pattern = []}
+    , pattern = 2
+    }
     
 
 init : () -> (Model, Cmd Msg)
@@ -75,4 +77,5 @@ main =
         , view = view
         , update = update
         , subscriptions = subscriptions
-}
+        }
+
