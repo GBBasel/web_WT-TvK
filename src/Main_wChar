@@ -6,19 +6,17 @@ import Html.Attributes exposing (style)
 import Html.Events exposing (..)
 import Html exposing (Html, button, div, p, table, td, text, tr)
 import Random exposing (int)
-import Array exposing (Array, get, repeat, set)
 
 -- MODEL
 
 type alias Model = 
     { difficulty : Int
-    , pattern : Array Int }
+    , pattern : List Char }
 
 initialModel : Model
 initialModel =
-    { difficulty = 1
-    , pattern = 2
-    }
+    { difficulty = 8
+    , pattern = []}
     
 
 init : () -> (Model, Cmd Msg)
@@ -31,7 +29,7 @@ init _ =
 
 type Msg
     = Roll
-    | GeneratePattern (List Int)
+    | GenerateNumber (List Int)
     | IncreaseDifficulty
     
 
@@ -41,10 +39,10 @@ update msg model =
   case msg of
     Roll ->
       ( model
-      , Random.generate GeneratePattern (Random.list model.difficulty ( Random.int 0 9))
+      , Random.generate GenerateNumber (Random.list model.difficulty ( Random.int 33 125))
       )
-    GeneratePattern newpattern ->
-     ( { model | pattern = newpattern }, Cmd.none)
+    GenerateNumber newpattern ->
+     ( { model | pattern = (List.map Char.fromCode newpattern) }, Cmd.none)
     IncreaseDifficulty ->
      ( { model | difficulty = model.difficulty + 1}, Cmd.none)
     
@@ -64,7 +62,7 @@ view model =
     div []
         [ text "Merke dir das folgende Muster:"
         , p [] []
-        , text <| String.join "" <| List.map String.fromInt model.pattern
+        , text <| String.join "" <| List.map String.fromChar model.pattern
         , p [] []
         , button [ onClick Roll ] [ text "Roll" ]
         ]
@@ -78,4 +76,3 @@ main =
         , update = update
         , subscriptions = subscriptions
         }
-
