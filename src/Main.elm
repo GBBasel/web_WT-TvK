@@ -2,21 +2,23 @@ module Main exposing (..)
 
 import Browser
 import String exposing (fromChar)
-import Html.Attributes exposing (style)
+import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Html exposing (Html, button, div, p, table, td, text, tr)
+import Html exposing (Html, button, div, p, table, td, text, tr, input)
 import Random exposing (int)
 
 -- MODEL
 
 type alias Model = 
     { difficulty : Int
-    , pattern : List Int }
+    , pattern : List Char
+    , inputContent : String }
 
 initialModel : Model
 initialModel =
     { difficulty = 1
-    , pattern = []}
+    , pattern = []
+    , inputContent = ""}
     
 
 init : () -> (Model, Cmd Msg)
@@ -29,21 +31,25 @@ init _ =
 type Msg
     = Roll
     | GeneratePattern (List Int)
-    | IncreaseDifficulty
-    | AskforPattern
+    | Change String
+    | Submit
     
 
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
-  case msg of
-    Roll ->
-      ( model, Random.generate GeneratePattern (Random.list model.difficulty ( Random.int 0 9)))
-    GeneratePattern newpattern ->
-        ( { model | pattern = newpattern }, Cmd.none)
-    IncreaseDifficulty ->
-        ( { model | difficulty = model.difficulty + 1}, Cmd.none)
-    AskforPattern ->
+    let 
+        increaseDifficulty = if model.inputContent == (String.join "" <| List.map String.fromChar model.pattern)  then 1 else 0
+    in
+    case msg of
+        Roll ->
+            ( model, Random.generate GeneratePattern (Random.list model.difficulty ( Random.int 33 125 )))
+        GeneratePattern newpattern ->
+            ( { model | pattern = (List.map Char.fromCode newpattern) }, Cmd.none)
+        Change newContent ->
+            ( { model | inputContent = newContent }, Cmd.none)
+        Submit ->
+            ( { model | difficulty = model.difficulty + increaseDifficulty }, Cmd.none )
         
 
      
@@ -64,9 +70,13 @@ view model =
     div []
         [ text "Merke dir das folgende Muster:"
         , p [] []
-        , text <| String.join "" <| List.map String.fromInt model.pattern
+        , text <| String.join "" <| List.map String.fromChar model.pattern
         , p [] []
         , button [ onClick Roll ] [ text "Roll" ]
+        , input [ placeholder "Text to reverse", value model.inputContent, onInput Change ] []
+        , div [] [ text model.inputContent ]
+        , button [ onClick Submit ] [ text "Submit" ]
+        , text <| String.fromInt model.difficulty
         ]
 
 -- MAIN
