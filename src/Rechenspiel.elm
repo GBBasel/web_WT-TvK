@@ -6,20 +6,23 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Html exposing (Html, button, div, p, table, td, text, tr, input)
 import Random exposing (int)
+import List exposing (sum)
+import Time exposing (..)
 
 -- MODEL
 
 type alias Model = 
     { difficulty : Int
-    , pattern : List Char
-    , inputContent : String }
+    , rechnung : List Int
+    , inputContent : String 
+    , countdown : Int }
 
 initialModel : Model
 initialModel =
     { difficulty = 1
-    , pattern = []
-    , inputContent = ""}
-    
+    , rechnung = []
+    , inputContent = ""
+    , countdown = 10 }
 
 init : () -> (Model, Cmd Msg)
 init _ =
@@ -29,39 +32,33 @@ init _ =
 -- UPDATE
 
 type Msg
-    = Roll
-    | GeneratePattern (List Int)
-    | Change String
-    | Submit
-    
-
+    = RRoll
+    | GenerateRechnung (List Int)
+    | RChange String
+    | RSubmit
+    | Tick Time.Posix
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     let 
-        increaseDifficulty = if model.inputContent == (String.join "" <| List.map String.fromChar model.pattern)  then 1 else 0
+        increaseDifficulty = if model.inputContent == ( String.fromInt (sum(model.rechnung)))  then 1 else 0
     in
     case msg of
-        Roll ->
-            ( model, Random.generate GeneratePattern (Random.list model.difficulty ( Random.int 33 125 )))
-        GeneratePattern newpattern ->
-            ( { model | pattern = (List.map Char.fromCode newpattern) }, Cmd.none)
-        Change newContent ->
+        RRoll ->
+            ( model, Random.generate GenerateRechnung (Random.list (model.difficulty + 1) ( Random.int 1 10 )))
+        GenerateRechnung newRechnung ->
+            ( { model | rechnung = newRechnung }, Cmd.none)
+        RChange newContent ->
             ( { model | inputContent = newContent }, Cmd.none)
-        Submit ->
+        RSubmit ->
             ( { model | difficulty = model.difficulty + increaseDifficulty }, Cmd.none )
-        
-
-     
-      
-
+        Tick time ->
+            ( { model | countdown = (model.countdown - 1) }, Cmd.none )
 -- SUBSCRIPTIONS
-
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  Sub.none
-
+  Time.every 1000 Tick
 
 -- VIEW
 
@@ -70,16 +67,18 @@ view model =
     div []
         [ text "Merke dir das folgende Muster:"
         , p [] []
-        , text <| String.join "" <| List.map String.fromChar model.pattern
+        , text <| String.join "+" <| List.map String.fromInt model.rechnung
         , p [] []
-        , button [ onClick Roll ] [ text "Roll" ]
-        , input [ placeholder "Text to reverse", value model.inputContent, onInput Change ] []
+        , button [ onClick RRoll ] [ text "Roll" ]
+        , input [ placeholder "Solution", value model.inputContent, onInput RChange ] []
         , div [] [ text model.inputContent ]
-        , button [ onClick Submit ] [ text "Submit" ]
+        , button [ onClick RSubmit ] [ text "Submit" ]
         , text <| String.fromInt model.difficulty
+        , text <| String.fromInt model.countdown
         ]
 
 -- MAIN
+
 main : Program () Model Msg
 main =
     Browser.element
