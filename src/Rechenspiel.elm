@@ -1,13 +1,14 @@
 module Main exposing (..)
 
 import Browser
-import String exposing (fromChar)
+import String exposing (fromChar, replace)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Html exposing (Html, button, div, p, table, td, text, tr, input)
 import Random exposing (int)
 import List exposing (sum)
 import Time exposing (..)
+import Array exposing (..)
 
 -- MODEL
 
@@ -15,14 +16,16 @@ type alias Model =
     { difficulty : Int
     , rechnung : List Int
     , inputContent : String 
-    , countdown : Int }
+    , countdown : Int
+    }
 
 initialModel : Model
 initialModel =
     { difficulty = 1
     , rechnung = []
     , inputContent = ""
-    , countdown = 10 }
+    , countdown = 10 
+    }
 
 init : () -> (Model, Cmd Msg)
 init _ =
@@ -45,7 +48,7 @@ update msg model =
     in
     case msg of
         RRoll ->
-            ( model, Random.generate GenerateRechnung (Random.list (model.difficulty + 1) ( Random.int 1 10 )))
+            ( model, Random.generate GenerateRechnung (Random.list (model.difficulty + 1)( Random.int -100 100 )))
         GenerateRechnung newRechnung ->
             ( { model | rechnung = newRechnung }, Cmd.none)
         RChange newContent ->
@@ -67,7 +70,7 @@ view model =
     div []
         [ text "Merke dir das folgende Muster:"
         , p [] []
-        , text <| String.join "+" <| List.map String.fromInt model.rechnung
+        , text <| replace "+-" "-"<| String.join "+" <| List.map String.fromInt model.rechnung
         , p [] []
         , button [ onClick RRoll ] [ text "Roll" ]
         , input [ placeholder "Solution", value model.inputContent, onInput RChange ] []
