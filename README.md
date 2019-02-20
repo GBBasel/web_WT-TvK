@@ -26,7 +26,8 @@ KW 7: -Muster anzeigen und abfragen
       -Webseite "schön" aussehen lassen  
       -Homescreen mit einem Button, um Intelligenzspiel zu starten  
       
-KW 8: -Rechnungsgenerator  
+KW 8: -Rechnungsgenerator
+      -CSS im elm-file integrieren...
 
 KW 9: -fertigstellen...  
   
