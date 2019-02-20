@@ -17,6 +17,7 @@ type Screen
 
 type alias Model = 
     { difficulty : Int
+    , dontcheat : Int
     , pattern : List Char
     , inputContent : String
     , screen : Screen
@@ -24,7 +25,8 @@ type alias Model =
 
 initialModel : Model
 initialModel =
-    { difficulty = 1
+    { difficulty = 3
+    , dontcheat = 0
     , pattern = []
     , inputContent = ""
     , screen = Home
@@ -37,13 +39,6 @@ init _ =
   , Cmd.none )
 
 -- UPDATE
-
-type Msg
-    = Roll
-    | GeneratePattern (List Int)
-    | Change String
-    | Submit
-    | ChangeScreen
     
 nextscreen : Screen -> Screen
 nextscreen oldscreen = case oldscreen of
@@ -56,6 +51,14 @@ nextscreen oldscreen = case oldscreen of
     InsertPattern ->
         Home
 
+
+type Msg
+    = Roll
+    | GeneratePattern (List Int)
+    | Change String
+    | Submit
+    | ChangeScreen
+    
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     let 
@@ -69,15 +72,10 @@ update msg model =
         Change newContent ->
             ( { model | inputContent = newContent }, Cmd.none)
         Submit ->
-            ( { model | difficulty = model.difficulty + increaseDifficulty }, Cmd.none )
+            ( { model | difficulty = model.difficulty + increaseDifficulty, screen = nextscreen model.screen }, Cmd.none )
         ChangeScreen ->
             ( { model | screen = nextscreen model.screen }, Cmd.none)
-        
-        
-
-      
-      
-
+ 
 -- SUBSCRIPTIONS
 
 
@@ -90,9 +88,17 @@ subscriptions model =
 
 view : Model -> Html Msg
 view model =
+    let
+        divstyle = [ style "position" "fixed"
+                   , style "top" "50%"
+                   , style "left" "50%"
+                   , style "margin-top" "-100px"
+                   , style "margin-left" "-200px"
+                   ]
+    in
     case model.screen of
         Home ->
-            div [][text "Home"
+            div [divstyle][text "Home"
                 , p [] []
                 , button [ onClick ChangeScreen ] [ text "Spiel starten" ]
                 ]
@@ -103,7 +109,8 @@ view model =
                 , text <| String.join "" <| List.map String.fromChar model.pattern
                 , p [] []
                 , button [ onClick Roll ] [ text "Roll" ]
-                , text <| String.fromInt model.difficulty
+                ,p [] []
+                , text <| "Schwierigkeit "++String.fromInt model.difficulty
                 , p [] []
                 , button [ onClick ChangeScreen ] [ text "Weiter zum rechnen" ]
                 ]
@@ -118,10 +125,7 @@ view model =
                 , div [] [ text model.inputContent ]
                 , button [ onClick Submit ] [ text "Submit" ]
                 , text <| String.fromInt model.difficulty
-                , p [] []
-                , button [ onClick ChangeScreen ] [ text "Zurück zum Home" ]
                 ]
-
 
 -- MAIN
 main : Program () Model Msg
