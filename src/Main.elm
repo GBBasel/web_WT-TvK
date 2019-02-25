@@ -80,7 +80,7 @@ update msg model =
     let 
         increaseDifficulty = if model.inputContent == (String.join "" <| List.map String.fromChar model.pattern)  then 1 else 0
         prüf1 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) then 1 else 0
-        prüf2 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) && model.azr > 0 then model.screen else InsertPattern
+        prüf2 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) && model.azr == 1 then InsertPattern else model.screen
         prüf3 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) then 10 else model.countdown
         counter = if model.countdown < 1 then Home else model.screen
         countdownscreen = if model.screen == Math then 1 else 0
@@ -91,7 +91,7 @@ update msg model =
         Change newContent ->
             ( { model | inputContent = newContent }, Cmd.none)
         Submit ->
-            ( { model | difficulty = model.difficulty + increaseDifficulty, screen = nextscreen model.screen }, Cmd.none )
+            ( { model | difficulty = model.difficulty + increaseDifficulty, screen = nextscreen model.screen, inputContent = "" }, Cmd.none )
         ChangeScreen ->
             ( { model | screen = nextscreen model.screen }, Cmd.none)
         GenerateRechnung newRechnung ->
@@ -99,13 +99,13 @@ update msg model =
         RechnungChange newContent ->
             ( { model | inputContentRechnung = newContent }, Cmd.none)
         RechnungSubmit ->
-            ( { model | azr = model.azr - prüf1, screen = prüf2, countdown = prüf3 }, Random.generate GenerateRechnung (Random.list 2 ( Random.int -100 100 )))
+            ( { model | azr = model.azr - prüf1, screen = prüf2, countdown = prüf3, inputContentRechnung = "" }, Random.generate GenerateRechnung (Random.list 2 ( Random.int -100 100 )))
         Tick time ->
             ( { model | countdown = model.countdown - countdownscreen, screen = counter}, Cmd.none )
         ChangeScreenToHome ->
             ( { model | screen = Home }, Cmd.none)
         ChangeScreenToPattern ->
-            ( { model | screen = nextscreen model.screen }, Random.generate GeneratePattern (Random.list model.difficulty ( Random.int 33 125 )))
+            ( { model | screen = nextscreen model.screen, countdown = 10 }, Random.generate GeneratePattern (Random.list model.difficulty ( Random.int 33 125 )))
         ChangeScreenToRechnung ->
             ( { model | screen = nextscreen model.screen, azr = model.difficulty, countdown = 10 }, Random.generate GenerateRechnung (Random.list 2 ( Random.int -100 100 )))
 
@@ -142,6 +142,8 @@ view model =
     case model.screen of
         Home ->
             div divstyle [ p [] []
+                , text <| "aktuelle Schwierigkeit: " ++ String.fromInt model.difficulty
+                , p [] []
                 , button ([ onClick ChangeScreenToPattern ]++buttonstyle) [ text "Spiel starten" ]
                 , p [] []
                 , button ([ onClick ChangeScreen ]++buttonstyle) [ text "Shop" ]
@@ -168,7 +170,6 @@ view model =
                 , button ([ onClick RechnungSubmit ]++buttonstyle) [ text "Bestätigen" ]
                 , p [] []
                 , text <| "Verbleibende Zeit: "++String.fromInt model.countdown
-                , button ([ onClick ChangeScreen ]++buttonstyle) [ text "Weiter zum gemerkten Muster" ]
                 ]
         InsertPattern ->
             div divstyle [text "Gib das Muster ein, welches du dir gemerkt hast"

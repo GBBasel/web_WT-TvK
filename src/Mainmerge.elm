@@ -80,7 +80,7 @@ update msg model =
     let 
         increaseDifficulty = if model.inputContent == (String.join "" <| List.map String.fromChar model.pattern)  then 1 else 0
         prüf1 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) then 1 else 0
-        prüf2 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) && model.azr > 0 then model.screen else InsertPattern
+        prüf2 = if model.azr < 0 then Math else InsertPattern
         prüf3 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) then 10 else model.countdown
         counter = if model.countdown < 1 then Home else model.screen
         countdownscreen = if model.screen == Math then 1 else 0
@@ -105,7 +105,7 @@ update msg model =
         ChangeScreenToHome ->
             ( { model | screen = Home }, Cmd.none)
         ChangeScreenToPattern ->
-            ( { model | screen = nextscreen model.screen }, Random.generate GeneratePattern (Random.list model.difficulty ( Random.int 33 125 )))
+            ( { model | screen = nextscreen model.screen, countdown = 10 }, Random.generate GeneratePattern (Random.list model.difficulty ( Random.int 33 125 )))
         ChangeScreenToRechnung ->
             ( { model | screen = nextscreen model.screen, azr = model.difficulty, countdown = 10 }, Random.generate GenerateRechnung (Random.list 2 ( Random.int -100 100 )))
 
@@ -158,7 +158,6 @@ view model =
                 , button [ onClick RechnungSubmit ] [ text "Submit" ]
                 , text <| String.fromInt model.difficulty
                 , text <| String.fromInt model.countdown
-                , button [ onClick ChangeScreen ] [ text "Weiter zum gemerkten Muster" ]
                 ]
         InsertPattern ->
             div [][text "Gib das Muster ein, welches du dir gemerkt hast"
