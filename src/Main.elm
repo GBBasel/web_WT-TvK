@@ -46,7 +46,7 @@ initialModel =
     , inputContentRechnung = ""
     , countdown = 10 
     , azr = 0
-    , hirnzellen = 100
+    , hirnzellen = 0
     , iq = 0
     , fehlfunktion = ""
     }
@@ -226,13 +226,13 @@ view model =
             , p [] []
             , text <| model.fehlfunktion
             , p [] []
+            , button  ([ onClick Win ]++buttonstyle) [ text "Gewinne mit 100 Hirnzellen das Spiel" ]
+            , p [] []
             , button  ([ onClick ChangeScreenToHome ]++buttonstyle) [ text "Zurück zum Starbildschirm" ]
             , p [] []
             , text <| "Anzahl Hirnzellen:" ++ String.fromInt model.hirnzellen
             , p [] []
             , text <| "Dein IQ:" ++ String.fromInt model.iq
-            , p [] []
-            , button  ([ onClick Win ]++buttonstyle) [ text "Gewinne mit 100 Hirnzellen das Spiel" ]
             ]
         Gewonnen ->
             div divstyle [text "Wow, du hast gewonnen!" ]
