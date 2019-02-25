@@ -18,6 +18,7 @@ type Screen
     | Math
     | InsertPattern
     | Shop
+    | Gewonnen
 
 type alias Model = 
     { difficulty : Int
@@ -69,6 +70,8 @@ nextscreen oldscreen = case oldscreen of
         Home
     Shop ->
         Home
+    Gewonnen ->
+        Home
 
 
 type Msg
@@ -85,6 +88,7 @@ type Msg
     | RechnungSubmit
     | Tick Time.Posix
     | IncreaseIQ 
+    | Win
     
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -93,12 +97,13 @@ update msg model =
         prüf1 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) then 1 else 0
         prüf2 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) && model.azr == 1 then InsertPattern else model.screen
         prüf3 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) then 10 else model.countdown
-        prüf4 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) then 10 else 0
+        prüf4 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) then 1 else 0
         counter = if model.countdown < 1 then Home else model.screen
         countdownscreen = if model.screen == Math then 1 else 0
-        enoughornot = if model.hirnzellen > 99 && (model.difficulty - model.iq) > 1 then 1 else 0
-        enoughornot2 = if model.hirnzellen > 99 && (model.difficulty - model.iq) > 1 then 100 else 0
-        szn = if model.hirnzellen > 99 && (model.difficulty - model.iq) > 1 then "" else "Hier wird nicht beschissen!"
+        enoughornot = if model.hirnzellen > 9 && (model.difficulty - model.iq) > 1 then 1 else 0
+        enoughornot2 = if model.hirnzellen > 9 && (model.difficulty - model.iq) > 1 then 100 else 0
+        enoughornot3 = if model.hirnzellen > 99 then Gewonnen else Shop
+        szn = if model.hirnzellen > 9 && (model.difficulty - model.iq) > 1 then "" else "Hier wird nicht beschissen!"
     in
     case msg of
         GeneratePattern newpattern ->
@@ -127,6 +132,8 @@ update msg model =
             ( { model | screen = Shop, countdown = 10}, Cmd.none)
         IncreaseIQ ->
             ( { model | iq = model.iq + enoughornot, hirnzellen = model.hirnzellen - enoughornot2, fehlfunktion = szn}, Cmd.none)
+        Win ->
+            ( { model | screen = enoughornot3}, Cmd.none)
 
 -- SUBSCRIPTIONS
 
@@ -215,7 +222,7 @@ view model =
         Shop ->
             div divstyle [text "Kauf dir mit deinen Hirnzellen ein wenig IQ"
             , p [] []
-            , button  ([ onClick IncreaseIQ ]++buttonstyle) [ text "IQ erhöhen für 100 Hirnzellen" ]
+            , button  ([ onClick IncreaseIQ ]++buttonstyle) [ text "IQ erhöhen für 10 Hirnzellen" ]
             , p [] []
             , text <| model.fehlfunktion
             , p [] []
@@ -224,7 +231,12 @@ view model =
             , text <| "Anzahl Hirnzellen:" ++ String.fromInt model.hirnzellen
             , p [] []
             , text <| "Dein IQ:" ++ String.fromInt model.iq
+            , p [] []
+            , button  ([ onClick Win ]++buttonstyle) [ text "Gewinne mit 100 Hirnzellen das Spiel" ]
             ]
+        Gewonnen ->
+            div divstyle [text "Wow, du hast gewonnen!" ]
+            
 
 -- MAIN
 main : Program () Model Msg
