@@ -17,6 +17,7 @@ type Screen
     | Pattern
     | Math
     | InsertPattern
+    | Shop
 
 type alias Model = 
     { difficulty : Int
@@ -28,6 +29,9 @@ type alias Model =
     , inputContentRechnung : String 
     , countdown : Int
     , azr : Int
+    , hirnzellen : Int
+    , iq : Int
+    , fehlfunktion : String
     }
 
 initialModel : Model
@@ -41,6 +45,9 @@ initialModel =
     , inputContentRechnung = ""
     , countdown = 10 
     , azr = 0
+    , hirnzellen = 100
+    , iq = 0
+    , fehlfunktion = ""
     }
 
 init : () -> (Model, Cmd Msg)
@@ -60,6 +67,8 @@ nextscreen oldscreen = case oldscreen of
         InsertPattern
     InsertPattern ->
         Home
+    Shop ->
+        Home
 
 
 type Msg
@@ -70,10 +79,12 @@ type Msg
     | ChangeScreenToPattern
     | ChangeScreenToRechnung
     | ChangeScreenToHome
+    | ChangeScreenToShop
     | GenerateRechnung (List Int)
     | RechnungChange String
     | RechnungSubmit
     | Tick Time.Posix
+    | IncreaseIQ 
     
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -82,8 +93,12 @@ update msg model =
         prüf1 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) then 1 else 0
         prüf2 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) && model.azr == 1 then InsertPattern else model.screen
         prüf3 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) then 10 else model.countdown
+        prüf4 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) then 10 else 0
         counter = if model.countdown < 1 then Home else model.screen
         countdownscreen = if model.screen == Math then 1 else 0
+        enoughornot = if model.hirnzellen > 99 && (model.difficulty - model.iq) > 1 then 1 else 0
+        enoughornot2 = if model.hirnzellen > 99 && (model.difficulty - model.iq) > 1 then 100 else 0
+        szn = if model.hirnzellen > 99 && (model.difficulty - model.iq) > 1 then "" else "Hier wird nicht beschissen!"
     in
     case msg of
         GeneratePattern newpattern ->
@@ -99,16 +114,19 @@ update msg model =
         RechnungChange newContent ->
             ( { model | inputContentRechnung = newContent }, Cmd.none)
         RechnungSubmit ->
-            ( { model | azr = model.azr - prüf1, screen = prüf2, countdown = prüf3, inputContentRechnung = "" }, Random.generate GenerateRechnung (Random.list 2 ( Random.int -100 100 )))
+            ( { model | azr = model.azr - prüf1, screen = prüf2, countdown = prüf3, hirnzellen = model.hirnzellen + prüf4 ,inputContentRechnung = "" }, Random.generate GenerateRechnung (Random.list 2 ( Random.int -100 100 )))
         Tick time ->
             ( { model | countdown = model.countdown - countdownscreen, screen = counter}, Cmd.none )
         ChangeScreenToHome ->
-            ( { model | screen = Home }, Cmd.none)
+            ( { model | screen = Home, fehlfunktion = "" }, Cmd.none)
         ChangeScreenToPattern ->
-            ( { model | screen = nextscreen model.screen, countdown = 10 }, Random.generate GeneratePattern (Random.list model.difficulty ( Random.int 33 125 )))
+            ( { model | screen = nextscreen model.screen, countdown = 10 }, Random.generate GeneratePattern (Random.list (model.difficulty - model.iq) ( Random.int 33 125 )))
         ChangeScreenToRechnung ->
-            ( { model | screen = nextscreen model.screen, azr = model.difficulty, countdown = 10 }, Random.generate GenerateRechnung (Random.list 2 ( Random.int -100 100 )))
-
+            ( { model | screen = nextscreen model.screen, azr = (model.difficulty - model.iq), countdown = 10 }, Random.generate GenerateRechnung (Random.list 2 ( Random.int -100 100 )))
+        ChangeScreenToShop ->
+            ( { model | screen = Shop, countdown = 10}, Cmd.none)
+        IncreaseIQ ->
+            ( { model | iq = model.iq + enoughornot, hirnzellen = model.hirnzellen - enoughornot2, fehlfunktion = szn}, Cmd.none)
 
 -- SUBSCRIPTIONS
 
@@ -146,7 +164,11 @@ view model =
                 , p [] []
                 , button ([ onClick ChangeScreenToPattern ]++buttonstyle) [ text "Spiel starten" ]
                 , p [] []
-                , button ([ onClick ChangeScreen ]++buttonstyle) [ text "Shop" ]
+                , button ([ onClick ChangeScreenToShop ]++buttonstyle) [ text "Shop" ]
+                , p [] []
+                , text <| "Anzahl Hirnzellen:" ++ String.fromInt model.hirnzellen
+                , p [] []
+                , text <| "Dein IQ:" ++ String.fromInt model.iq
                 ]
         Pattern ->
             div divstyle
@@ -157,6 +179,10 @@ view model =
                 , text <| "aktuelle Schwierigkeit: "++String.fromInt model.difficulty
                 , p [] []
                 , button ([ onClick ChangeScreenToRechnung ]++buttonstyle) [ text "Weiter zum rechnen" ]
+                , p [] []
+                , text <| "Anzahl Hirnzellen:" ++ String.fromInt model.hirnzellen
+                , p [] []
+                , text <| "Dein IQ:" ++ String.fromInt model.iq
                 ]
         Math ->
             div divstyle [text "Löse die Rechnungen:"
@@ -170,6 +196,10 @@ view model =
                 , button ([ onClick RechnungSubmit ]++buttonstyle) [ text "Bestätigen" ]
                 , p [] []
                 , text <| "Verbleibende Zeit: "++String.fromInt model.countdown
+                , p [] []
+                , text <| "Anzahl Hirnzellen:" ++ String.fromInt model.hirnzellen
+                , p [] []
+                , text <| "Dein IQ:" ++ String.fromInt model.iq
                 ]
         InsertPattern ->
             div divstyle [text "Gib das Muster ein, welches du dir gemerkt hast"
@@ -177,7 +207,24 @@ view model =
                 , p [] []
                 , button ([ onClick Submit ]++buttonstyle) [ text "Bestätigen" ]
                 , text <| "aktuelle Schwierigkeit: "++String.fromInt model.difficulty
+                , p [] []
+                , text <| "Anzahl Hirnzellen:" ++ String.fromInt model.hirnzellen
+                , p [] []
+                , text <| "Dein IQ:" ++ String.fromInt model.iq
                 ]
+        Shop ->
+            div divstyle [text "Kauf dir mit deinen Hirnzellen ein wenig IQ"
+            , p [] []
+            , button  ([ onClick IncreaseIQ ]++buttonstyle) [ text "IQ erhöhen für 100 Hirnzellen" ]
+            , p [] []
+            , text <| model.fehlfunktion
+            , p [] []
+            , button  ([ onClick ChangeScreenToHome ]++buttonstyle) [ text "Zurück zum Starbildschirm" ]
+            , p [] []
+            , text <| "Anzahl Hirnzellen:" ++ String.fromInt model.hirnzellen
+            , p [] []
+            , text <| "Dein IQ:" ++ String.fromInt model.iq
+            ]
 
 -- MAIN
 main : Program () Model Msg
