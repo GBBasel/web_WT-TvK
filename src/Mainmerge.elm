@@ -27,11 +27,12 @@ type alias Model =
     , rechnung : List Int
     , inputContentRechnung : String 
     , countdown : Int
+    , azr : Int
     }
 
 initialModel : Model
 initialModel =
-    { difficulty = 3
+    { difficulty = 1
     , dontcheat = 0
     , pattern = []
     , inputContent = ""
@@ -39,6 +40,7 @@ initialModel =
     , rechnung = []
     , inputContentRechnung = ""
     , countdown = 10 
+    , azr = 0
     }
 
 init : () -> (Model, Cmd Msg)
@@ -61,12 +63,13 @@ nextscreen oldscreen = case oldscreen of
 
 
 type Msg
-    = Roll
-    | GeneratePattern (List Int)
+    = GeneratePattern (List Int)
     | Change String
     | Submit
     | ChangeScreen
-    | RechnungRoll
+    | ChangeScreenToPattern
+    | ChangeScreenToRechnung
+    | ChangeScreenToHome
     | GenerateRechnung (List Int)
     | RechnungChange String
     | RechnungSubmit
@@ -76,10 +79,13 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     let 
         increaseDifficulty = if model.inputContent == (String.join "" <| List.map String.fromChar model.pattern)  then 1 else 0
+        prüf1 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) then 1 else 0
+        prüf2 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) && model.azr > 0 then model.screen else InsertPattern
+        prüf3 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) then 10 else model.countdown
+        counter = if model.countdown < 1 then Home else model.screen
+        countdownscreen = if model.screen == Math then 1 else 0
     in
     case msg of
-        Roll ->
-            ( model, Random.generate GeneratePattern (Random.list model.difficulty ( Random.int 33 125 )))
         GeneratePattern newpattern ->
             ( { model | pattern = (List.map Char.fromCode newpattern) }, Cmd.none)
         Change newContent ->
@@ -88,16 +94,21 @@ update msg model =
             ( { model | difficulty = model.difficulty + increaseDifficulty, screen = nextscreen model.screen }, Cmd.none )
         ChangeScreen ->
             ( { model | screen = nextscreen model.screen }, Cmd.none)
-        RechnungRoll ->
-            ( model, Random.generate GenerateRechnung (Random.list (model.difficulty + 1)( Random.int -100 100 )))
         GenerateRechnung newRechnung ->
             ( { model | rechnung = newRechnung }, Cmd.none)
         RechnungChange newContent ->
             ( { model | inputContentRechnung = newContent }, Cmd.none)
         RechnungSubmit ->
-            ( { model | difficulty = model.difficulty + increaseDifficulty }, Cmd.none )
+            ( { model | azr = model.azr - prüf1, screen = prüf2, countdown = prüf3 }, Random.generate GenerateRechnung (Random.list 2 ( Random.int -100 100 )))
         Tick time ->
-            ( { model | countdown = (model.countdown - 1) }, Cmd.none )
+            ( { model | countdown = model.countdown - countdownscreen, screen = counter}, Cmd.none )
+        ChangeScreenToHome ->
+            ( { model | screen = Home }, Cmd.none)
+        ChangeScreenToPattern ->
+            ( { model | screen = nextscreen model.screen }, Random.generate GeneratePattern (Random.list model.difficulty ( Random.int 33 125 )))
+        ChangeScreenToRechnung ->
+            ( { model | screen = nextscreen model.screen, azr = model.difficulty, countdown = 10 }, Random.generate GenerateRechnung (Random.list 2 ( Random.int -100 100 )))
+
 
 -- SUBSCRIPTIONS
 
@@ -123,26 +134,25 @@ view model =
         Home ->
             div divstyle [text "Home"
                 , p [] []
-                , button [ onClick ChangeScreen ] [ text "Spiel starten" ]
+                , button [ onClick ChangeScreenToPattern ] [ text "Spiel starten" ]
                 ]
         Pattern ->
             div []
                 [ text "Merke dir das folgende Muster:"
                 , p [] []
                 , text <| String.join "" <| List.map String.fromChar model.pattern
-                , p [] []
-                , button [ onClick Roll ] [ text "Roll" ]
                 ,p [] []
                 , text <| "Schwierigkeit "++String.fromInt model.difficulty
                 , p [] []
-                , button [ onClick ChangeScreen ] [ text "Weiter zum rechnen" ]
+                , button [ onClick ChangeScreenToRechnung ] [ text "Weiter zum rechnen" ]
                 ]
         Math ->
             div [][text "Rechenspiel"
                 , p [] []
                 , text <| replace "+-" "-"<| String.join "+" <| List.map String.fromInt model.rechnung
                 , p [] []
-                , button [ onClick RechnungRoll ] [ text "Roll" ]
+                , text <| "Anzahl Rechnungen zu lösen:"++String.fromInt model.azr
+                , p [] []
                 , input [ placeholder "Solution", value model.inputContentRechnung, onInput RechnungChange ] []
                 , div [] [ text model.inputContentRechnung ]
                 , button [ onClick RechnungSubmit ] [ text "Submit" ]
