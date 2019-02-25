@@ -29,14 +29,14 @@ KW 7: -Muster anzeigen und abfragen
 KW 8: -Rechnungsgenerator
       -CSS im elm-file integrieren...
 
-KW 9: -fertigstellen...  
+KW 9: -Shop benützbar machen
+      -Rechnungsgenerator fertig 
+      -Countdown fertig
   
   
 
 ##### Notizen
-Etwas in der Mitte des Browsers darstellen:
-https://stackoverflow.com/questions/11093603/how-to-set-page-content-to-the-middle-of-screen
 
 Packages auf ellie:
 Random
-elm-css / feldmann
+Time
