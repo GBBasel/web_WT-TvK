@@ -97,11 +97,12 @@ update msg model =
         prüf1 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) then 1 else 0
         prüf2 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) && model.azr == 1 then InsertPattern else model.screen
         prüf3 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) then 10 else model.countdown
-        prüf4 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) then (1 * model.difficulty) else 0
+        prüf4 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) then 1 else 0
+        prüf5 = if model.inputContent == (String.join "" <| List.map String.fromChar model.pattern) then (1 * model.difficulty) else 0
         counter = if model.countdown < 1 then Home else model.screen
         countdownscreen = if model.screen == Math then 1 else 0
         enoughornot = if model.hirnzellen > 9 && (model.difficulty - model.iq) > 1 then 1 else 0
-        enoughornot2 = if model.hirnzellen > 9 && (model.difficulty - model.iq) > 1 then 100 else 0
+        enoughornot2 = if model.hirnzellen > 9 && (model.difficulty - model.iq) > 1 then 10 else 0
         enoughornot3 = if model.hirnzellen > 99 then Gewonnen else Shop
         szn = if model.hirnzellen > 9 && (model.difficulty - model.iq) > 1 then "" else "Hier wird nicht beschissen!"
     in
@@ -111,7 +112,7 @@ update msg model =
         Change newContent ->
             ( { model | inputContent = newContent }, Cmd.none)
         Submit ->
-            ( { model | difficulty = model.difficulty + increaseDifficulty, screen = nextscreen model.screen, inputContent = "" }, Cmd.none )
+            ( { model | difficulty = model.difficulty + increaseDifficulty, screen = nextscreen model.screen, inputContent = "", hirnzellen = model.hirnzellen + prüf5 }, Cmd.none )
         ChangeScreen ->
             ( { model | screen = nextscreen model.screen }, Cmd.none)
         GenerateRechnung newRechnung ->

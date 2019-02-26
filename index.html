@@ -5604,10 +5604,16 @@ var elm$random$Random$list = F2(
 var author$project$Main$update = F2(
 	function (msg, model) {
 		var szn = ((model.hirnzellen > 9) && ((model.difficulty - model.iq) > 1)) ? '' : 'Hier wird nicht beschissen!';
+		var prüf5 = _Utils_eq(
+			model.inputContent,
+			A2(
+				elm$core$String$join,
+				'',
+				A2(elm$core$List$map, elm$core$String$fromChar, model.pattern))) ? (1 * model.difficulty) : 0;
 		var prüf4 = _Utils_eq(
 			model.inputContentRechnung,
 			elm$core$String$fromInt(
-				elm$core$List$sum(model.rechnung))) ? (1 * model.difficulty) : 0;
+				elm$core$List$sum(model.rechnung))) ? 1 : 0;
 		var prüf3 = _Utils_eq(
 			model.inputContentRechnung,
 			elm$core$String$fromInt(
@@ -5627,7 +5633,7 @@ var author$project$Main$update = F2(
 				'',
 				A2(elm$core$List$map, elm$core$String$fromChar, model.pattern))) ? 1 : 0;
 		var enoughornot3 = (model.hirnzellen > 99) ? author$project$Main$Gewonnen : author$project$Main$Shop;
-		var enoughornot2 = ((model.hirnzellen > 9) && ((model.difficulty - model.iq) > 1)) ? 100 : 0;
+		var enoughornot2 = ((model.hirnzellen > 9) && ((model.difficulty - model.iq) > 1)) ? 10 : 0;
 		var enoughornot = ((model.hirnzellen > 9) && ((model.difficulty - model.iq) > 1)) ? 1 : 0;
 		var counter = (model.countdown < 1) ? author$project$Main$Home : model.screen;
 		var countdownscreen = _Utils_eq(model.screen, author$project$Main$Math) ? 1 : 0;
@@ -5654,6 +5660,7 @@ var author$project$Main$update = F2(
 						model,
 						{
 							difficulty: model.difficulty + increaseDifficulty,
+							hirnzellen: model.hirnzellen + prüf5,
 							inputContent: '',
 							screen: author$project$Main$nextscreen(model.screen)
 						}),
