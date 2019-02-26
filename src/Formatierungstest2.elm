@@ -168,7 +168,7 @@ view model =
                 [ p [] []
                 , h1 [style "font-family" "Showcard Gothic"] [text "littlebit-of-big-bamboozled-BOT-bootcamp"]
                 , p [] []
-                , img [src "36521104-retro-comic-book-style-cartoon-robot-white.png", width 300, height 300] [] --Source of Image: https://previews.123rf.com/images/lineartestpilot/lineartestpilot1502/lineartestpilot150207612/36521104-retro-comic-book-style-cartoon-robot.jpg
+                , img [src "Robot.png", width 300, height 300] [] --Source of Image: https://previews.123rf.com/images/lineartestpilot/lineartestpilot1502/lineartestpilot150207612/36521104-retro-comic-book-style-cartoon-robot.jpg
                 , p [] []
                 , button ([ onClick ChangeScreenToPattern ]++buttonstyle) [ text "Spiel starten" ]
                 , p [] []
