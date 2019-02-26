@@ -46,7 +46,7 @@ initialModel =
     , inputContentRechnung = ""
     , countdown = 10 
     , azr = 0
-    , hirnzellen = 100
+    , hirnzellen = 0
     , iq = 0
     , fehlfunktion = ""
     }
@@ -216,7 +216,7 @@ view model =
             div ( style "margin-top" "175px" :: divstyle )
                 [text "Gib das Muster ein, welches du dir gemerkt hast"
                 , p [] []
-                , input [ placeholder "Text to reverse", value model.inputContent, onInput Change ] []
+                , input [value model.inputContent, onInput Change ] []
                 , p [] []
                 , button ([ onClick Submit ]++buttonstyle) [ text "Bestätigen" ]
                 , p [] []

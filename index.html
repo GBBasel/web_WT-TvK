@@ -4484,7 +4484,7 @@ var elm$core$Set$toList = function (_n0) {
 	var dict = _n0.a;
 	return elm$core$Dict$keys(dict);
 };
-var author$project$Main$initialModel = {azr: 0, countdown: 10, difficulty: 1, dontcheat: 0, fehlfunktion: '', hirnzellen: 100, inputContent: '', inputContentRechnung: '', iq: 0, pattern: _List_Nil, rechnung: _List_Nil, screen: author$project$Main$Home};
+var author$project$Main$initialModel = {azr: 0, countdown: 10, difficulty: 1, dontcheat: 0, fehlfunktion: '', hirnzellen: 0, inputContent: '', inputContentRechnung: '', iq: 0, pattern: _List_Nil, rechnung: _List_Nil, screen: author$project$Main$Home};
 var elm$core$Basics$False = {$: 'False'};
 var elm$core$Basics$True = {$: 'True'};
 var elm$core$Result$isOk = function (result) {
@@ -6076,7 +6076,6 @@ var author$project$Main$view = function (model) {
 						elm$html$Html$input,
 						_List_fromArray(
 							[
-								elm$html$Html$Attributes$placeholder('Text to reverse'),
 								elm$html$Html$Attributes$value(model.inputContent),
 								elm$html$Html$Events$onInput(author$project$Main$Change)
 							]),
