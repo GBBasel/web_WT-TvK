@@ -4,7 +4,7 @@ import Browser
 import String exposing (fromChar, replace)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Html exposing (Html, button, div, p, table, td, text, tr, input)
+import Html exposing (..)
 import Random exposing (int)
 import List exposing (sum)
 import Time exposing (..)
@@ -119,7 +119,7 @@ update msg model =
         RechnungChange newContent ->
             ( { model | inputContentRechnung = newContent }, Cmd.none)
         RechnungSubmit ->
-            ( { model | azr = model.azr - prüf1, screen = prüf2, countdown = prüf3, hirnzellen = model.hirnzellen + prüf4 ,inputContentRechnung = "" }, Random.generate GenerateRechnung (Random.list 2 ( Random.int -100 100 )))
+            ( { model | azr = model.azr - prüf1, screen = prüf2, countdown = prüf3, hirnzellen = model.hirnzellen + prüf4 ,inputContentRechnung = "" }, Random.generate GenerateRechnung (Random.list 2 ( Random.int ((model.difficulty-model.iq)*(-5)) ((model.difficulty-model.iq)*20)  )))
         Tick time ->
             ( { model | countdown = model.countdown - countdownscreen, screen = counter}, Cmd.none )
         ChangeScreenToHome ->
@@ -127,7 +127,7 @@ update msg model =
         ChangeScreenToPattern ->
             ( { model | screen = nextscreen model.screen, countdown = 10 }, Random.generate GeneratePattern (Random.list (model.difficulty - model.iq) ( Random.int 33 125 )))
         ChangeScreenToRechnung ->
-            ( { model | screen = nextscreen model.screen, azr = (model.difficulty - model.iq), countdown = 10 }, Random.generate GenerateRechnung (Random.list 2 ( Random.int -100 100 )))
+            ( { model | screen = nextscreen model.screen, azr = (model.difficulty - model.iq), countdown = 10 }, Random.generate GenerateRechnung (Random.list 2 ( Random.int ((model.difficulty-model.iq)*(-5)) ((model.difficulty-model.iq)*20) )))
         ChangeScreenToShop ->
             ( { model | screen = Shop, countdown = 10}, Cmd.none)
         IncreaseIQ ->
@@ -149,36 +149,39 @@ view : Model -> Html Msg
 view model =
     let
         divstyle = [ style "font-size" "24px"
-                   , style "font-family" "Comic Sans MS"
-                   , style "position" "fixed"
-                   , style "top" "50%"
-                   , style "left" "50%"
-                   , style "margin-top" "-100px"
-                   , style "margin-left" "-50px"
+                   , style "font-family" "Showcard Gothic"
+                   , style "text-align" "center"
                    ]
+                   
          
-        buttonstyle = [ style "font-family" "Comic Sans MS"
+        buttonstyle = [ style "font-family" "Showcard Gothic"
                       , style "font-size" "24px"
                       , style "background-color" "orange"
                       , style "border-radius" "10%"
                       , style "border" "2px solid red"
                       ]
+
     in
     case model.screen of
         Home ->
-            div divstyle [ p [] []
-                , text <| "aktuelle Schwierigkeit: " ++ String.fromInt model.difficulty
+            div divstyle
+                [ p [] []
+                , h1 [style "font-family" "Showcard Gothic"] [text "littlebit-of-big-bamboozled-BOT-bootcamp"]
+                , p [] []
+                , img [src "Robot.png", width 300, height 300] [] --Source of Image: https://previews.123rf.com/images/lineartestpilot/lineartestpilot1502/lineartestpilot150207612/36521104-retro-comic-book-style-cartoon-robot.jpg
                 , p [] []
                 , button ([ onClick ChangeScreenToPattern ]++buttonstyle) [ text "Spiel starten" ]
                 , p [] []
                 , button ([ onClick ChangeScreenToShop ]++buttonstyle) [ text "Shop" ]
+                , p [] []
+                , text <| "aktuelle Schwierigkeit: " ++ String.fromInt model.difficulty
                 , p [] []
                 , text <| "Anzahl Hirnzellen:" ++ String.fromInt model.hirnzellen
                 , p [] []
                 , text <| "Dein IQ:" ++ String.fromInt model.iq
                 ]
         Pattern ->
-            div divstyle
+            div ( style "margin-top" "175px" :: divstyle)
                 [ text "Merke dir das folgende Muster:"
                 , p [style "font-color" "red"] []
                 , text <| String.join "" <| List.map String.fromChar model.pattern
@@ -192,7 +195,8 @@ view model =
                 , text <| "Dein IQ:" ++ String.fromInt model.iq
                 ]
         Math ->
-            div divstyle [text "Löse die Rechnungen:"
+            div ( style "margin-top" "175px" :: divstyle )
+                [text "Löse die Rechnungen:"
                 , p [] []
                 , text <| replace "+-" "-"<| String.join "+" <| List.map String.fromInt model.rechnung
                 , p [] []
@@ -209,10 +213,13 @@ view model =
                 , text <| "Dein IQ:" ++ String.fromInt model.iq
                 ]
         InsertPattern ->
-            div divstyle [text "Gib das Muster ein, welches du dir gemerkt hast"
-                , input [ placeholder "Text to reverse", value model.inputContent, onInput Change ] []
+            div ( style "margin-top" "175px" :: divstyle )
+                [text "Gib das Muster ein, welches du dir gemerkt hast"
+                , p [] []
+                , input [value model.inputContent, onInput Change ] []
                 , p [] []
                 , button ([ onClick Submit ]++buttonstyle) [ text "Bestätigen" ]
+                , p [] []
                 , text <| "aktuelle Schwierigkeit: "++String.fromInt model.difficulty
                 , p [] []
                 , text <| "Anzahl Hirnzellen:" ++ String.fromInt model.hirnzellen
@@ -220,7 +227,9 @@ view model =
                 , text <| "Dein IQ:" ++ String.fromInt model.iq
                 ]
         Shop ->
-            div divstyle [text "Kauf dir mit deinen Hirnzellen ein wenig IQ"
+            div (style "margin-top" "150px" :: divstyle )
+            [ h1 [style "font-family" "Showcard Gothic"] [text "Shop"]
+            , text "Kauf dir mit deinen Hirnzellen ein wenig IQ"
             , p [] []
             , button  ([ onClick IncreaseIQ ]++buttonstyle) [ text "IQ erhöhen für 10 Hirnzellen" ]
             , p [] []
@@ -235,7 +244,7 @@ view model =
             , text <| "Dein IQ:" ++ String.fromInt model.iq
             ]
         Gewonnen ->
-            div divstyle [text "Wow, du hast gewonnen!" ]
+            div (style "margin-top" "300px" :: divstyle) [text "Wow, du hast gewonnen!" ]
             
 
 -- MAIN

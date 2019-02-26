@@ -5691,7 +5691,7 @@ var author$project$Main$update = F2(
 						A2(
 							elm$random$Random$list,
 							2,
-							A2(elm$random$Random$int, -100, 100))));
+							A2(elm$random$Random$int, (model.difficulty - model.iq) * (-5), (model.difficulty - model.iq) * 20))));
 			case 'Tick':
 				var time = msg.a;
 				return _Utils_Tuple2(
@@ -5735,7 +5735,7 @@ var author$project$Main$update = F2(
 						A2(
 							elm$random$Random$list,
 							2,
-							A2(elm$random$Random$int, -100, 100))));
+							A2(elm$random$Random$int, (model.difficulty - model.iq) * (-5), (model.difficulty - model.iq) * 20))));
 			case 'ChangeScreenToShop':
 				return _Utils_Tuple2(
 					_Utils_update(
