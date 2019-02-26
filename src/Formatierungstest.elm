@@ -4,7 +4,7 @@ import Browser
 import String exposing (fromChar, replace)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Html exposing (Html, button, div, p, table, td, text, tr, input)
+import Html exposing (..)
 import Random exposing (int)
 import List exposing (sum)
 import Time exposing (..)
@@ -149,29 +149,35 @@ view : Model -> Html Msg
 view model =
     let
         divstyle = [ style "font-size" "24px"
-                   , style "font-family" "Comic Sans MS"
-                   , style "position" "fixed"
-                   , style "top" "50%"
-                   , style "left" "50%"
-                   , style "margin-top" "-100px"
-                   , style "margin-left" "-50px"
-                   ]
+                   , style "font-family" "Showcard Gothic"
+                   , style "text-align" "center"
+                   , style "margin" "0px"
+                   , style "background-color" "#92a8d1"
+                   , style "width" "2000x"
+                   , style "height" "710px"]
+                   
          
-        buttonstyle = [ style "font-family" "Comic Sans MS"
+        buttonstyle = [ style "font-family" "Showcard Gothic"
                       , style "font-size" "24px"
                       , style "background-color" "orange"
                       , style "border-radius" "10%"
                       , style "border" "2px solid red"
                       ]
+
     in
     case model.screen of
         Home ->
-            div divstyle [ p [] []
-                , text <| "aktuelle Schwierigkeit: " ++ String.fromInt model.difficulty
+            div divstyle
+                [ p [] []
+                , h1 [style "font-family" "Showcard Gothic"] [text "littlebit-of-big-bamboozled-BOT-bootcamp"]
+                , p [] []
+                , img [src "36521104-retro-comic-book-style-cartoon-robot.png", width 300, height 300] [] --Source of Image: https://previews.123rf.com/images/lineartestpilot/lineartestpilot1502/lineartestpilot150207612/36521104-retro-comic-book-style-cartoon-robot.jpg
                 , p [] []
                 , button ([ onClick ChangeScreenToPattern ]++buttonstyle) [ text "Spiel starten" ]
                 , p [] []
                 , button ([ onClick ChangeScreenToShop ]++buttonstyle) [ text "Shop" ]
+                , p [] []
+                , text <| "aktuelle Schwierigkeit: " ++ String.fromInt model.difficulty
                 , p [] []
                 , text <| "Anzahl Hirnzellen:" ++ String.fromInt model.hirnzellen
                 , p [] []
@@ -192,7 +198,8 @@ view model =
                 , text <| "Dein IQ:" ++ String.fromInt model.iq
                 ]
         Math ->
-            div divstyle [text "Löse die Rechnungen:"
+            div divstyle 
+                [text "Löse die Rechnungen:"
                 , p [] []
                 , text <| replace "+-" "-"<| String.join "+" <| List.map String.fromInt model.rechnung
                 , p [] []
@@ -209,10 +216,13 @@ view model =
                 , text <| "Dein IQ:" ++ String.fromInt model.iq
                 ]
         InsertPattern ->
-            div divstyle [text "Gib das Muster ein, welches du dir gemerkt hast"
+            div divstyle 
+                [text "Gib das Muster ein, welches du dir gemerkt hast"
+                , p [] []
                 , input [ placeholder "Text to reverse", value model.inputContent, onInput Change ] []
                 , p [] []
                 , button ([ onClick Submit ]++buttonstyle) [ text "Bestätigen" ]
+                , p [] []
                 , text <| "aktuelle Schwierigkeit: "++String.fromInt model.difficulty
                 , p [] []
                 , text <| "Anzahl Hirnzellen:" ++ String.fromInt model.hirnzellen
@@ -220,7 +230,9 @@ view model =
                 , text <| "Dein IQ:" ++ String.fromInt model.iq
                 ]
         Shop ->
-            div divstyle [text "Kauf dir mit deinen Hirnzellen ein wenig IQ"
+            div divstyle 
+            [ h1 [style "font-family" "Showcard Gothic"] [text "Shop"]
+            , text "Kauf dir mit deinen Hirnzellen ein wenig IQ"
             , p [] []
             , button  ([ onClick IncreaseIQ ]++buttonstyle) [ text "IQ erhöhen für 10 Hirnzellen" ]
             , p [] []
