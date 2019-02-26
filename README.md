@@ -39,4 +39,5 @@ KW 9: -Shop benützbar machen
 
 Packages auf ellie:
 Random
-Time
+Time  
+https://gbbasel.github.io/littlebit-of-big-bamboozled-BOT-bootcamp/
