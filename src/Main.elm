@@ -33,6 +33,7 @@ type alias Model =
     , hirnzellen : Int
     , iq : Int
     , fehlfunktion : String
+    , cheater : String
     }
 
 initialModel : Model
@@ -49,6 +50,7 @@ initialModel =
     , hirnzellen = 0
     , iq = 0
     , fehlfunktion = ""
+    , cheater = ""
     }
 
 init : () -> (Model, Cmd Msg)
@@ -96,7 +98,7 @@ update msg model =
         increaseDifficulty = if model.inputContent == (String.join "" <| List.map String.fromChar model.pattern)  then 1 else 0
         prüf1 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) then 1 else 0
         prüf2 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) && model.azr == 1 then InsertPattern else model.screen
-        prüf3 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) then 10 else model.countdown
+        prüf3 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) then (10+model.iq) else model.countdown
         prüf4 = if model.inputContentRechnung == ( String.fromInt (sum(model.rechnung))) then 1 else 0
         prüf5 = if model.inputContent == (String.join "" <| List.map String.fromChar model.pattern) then (1 * model.difficulty) else 0
         counter = if model.countdown < 1 then Home else model.screen
@@ -104,7 +106,8 @@ update msg model =
         enoughornot = if model.hirnzellen > 9 && (model.difficulty - model.iq) > 1 then 1 else 0
         enoughornot2 = if model.hirnzellen > 9 && (model.difficulty - model.iq) > 1 then 10 else 0
         enoughornot3 = if model.hirnzellen > 99 then Gewonnen else Shop
-        szn = if model.hirnzellen > 9 && (model.difficulty - model.iq) > 1 then "" else "Hier wird nicht beschissen!"
+        enoughornot4 = if model.hirnzellen > 9 && (model.difficulty - model.iq) > 1 then "" else "Hier wird nicht beschissen!"
+        enoughornot5 = if model.hirnzellen < 100 then "Hier wird nicht beschissen!" else ""
     in
     case msg of
         GeneratePattern newpattern ->
@@ -124,17 +127,17 @@ update msg model =
         Tick time ->
             ( { model | countdown = model.countdown - countdownscreen, screen = counter}, Cmd.none )
         ChangeScreenToHome ->
-            ( { model | screen = Home, fehlfunktion = "" }, Cmd.none)
+            ( { model | screen = Home, fehlfunktion = "", cheater = "" }, Cmd.none)
         ChangeScreenToPattern ->
             ( { model | screen = nextscreen model.screen, countdown = 10 }, Random.generate GeneratePattern (Random.list (model.difficulty - model.iq) ( Random.int 33 125 )))
         ChangeScreenToRechnung ->
-            ( { model | screen = nextscreen model.screen, azr = (model.difficulty - model.iq), countdown = 10 }, Random.generate GenerateRechnung (Random.list 2 ( Random.int ((model.difficulty-model.iq)*(-5)) ((model.difficulty-model.iq)*20) )))
+            ( { model | screen = nextscreen model.screen, azr = (model.difficulty - model.iq), countdown = (10+model.iq) }, Random.generate GenerateRechnung (Random.list 2 ( Random.int ((model.difficulty-model.iq)*(-5)) ((model.difficulty-model.iq)*20) )))
         ChangeScreenToShop ->
             ( { model | screen = Shop, countdown = 10}, Cmd.none)
         IncreaseIQ ->
-            ( { model | iq = model.iq + enoughornot, hirnzellen = model.hirnzellen - enoughornot2, fehlfunktion = szn}, Cmd.none)
+            ( { model | iq = model.iq + enoughornot, hirnzellen = model.hirnzellen - enoughornot2, fehlfunktion = enoughornot4}, Cmd.none)
         Win ->
-            ( { model | screen = enoughornot3}, Cmd.none)
+            ( { model | screen = enoughornot3, cheater = enoughornot5 }, Cmd.none)
 
 -- SUBSCRIPTIONS
 
@@ -184,9 +187,8 @@ view model =
         Pattern ->
             div ( style "margin-top" "175px" :: divstyle)
                 [ text "Merke dir das folgende Muster:"
-                , p [style "font-color" "red"] []
-                , text <| String.join "" <| List.map String.fromChar model.pattern
-                ,p [] []
+                , p [style "font-family" "Georgia"] [text <| String.join "" <| List.map String.fromChar model.pattern]
+                , p [] []
                 , text <| "aktuelle Schwierigkeit: "++String.fromInt model.difficulty
                 , p [] []
                 , button ([ onClick ChangeScreenToRechnung ]++buttonstyle) [ text "Weiter zum rechnen" ]
@@ -238,14 +240,18 @@ view model =
             , p [] []
             , button  ([ onClick Win ]++buttonstyle) [ text "Gewinne mit 100 Hirnzellen das Spiel" ]
             , p [] []
-            , button  ([ onClick ChangeScreenToHome ]++buttonstyle) [ text "Zurück zum Starbildschirm" ]
+            , text <| model.cheater
+            , p [style "margin" "20px"] [button  ([ onClick ChangeScreenToHome ]++buttonstyle) [ text "Zurück zum Starbildschirm" ]]
             , p [] []
             , text <| "Anzahl Hirnzellen:" ++ String.fromInt model.hirnzellen
             , p [] []
             , text <| "Dein IQ:" ++ String.fromInt model.iq
             ]
         Gewonnen ->
-            div (style "margin-top" "300px" :: divstyle) [text "Wow, du hast gewonnen!" ]
+            div (style "margin-top" "150px" :: divstyle) [text "Wow, du hast gewonnen!" 
+            , p[] []
+            , img [src "Robot.png", width 300, height 300] []
+            ]
             
 
 -- MAIN

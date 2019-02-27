@@ -4484,7 +4484,7 @@ var elm$core$Set$toList = function (_n0) {
 	var dict = _n0.a;
 	return elm$core$Dict$keys(dict);
 };
-var author$project$Main$initialModel = {azr: 0, countdown: 10, difficulty: 1, dontcheat: 0, fehlfunktion: '', hirnzellen: 0, inputContent: '', inputContentRechnung: '', iq: 0, pattern: _List_Nil, rechnung: _List_Nil, screen: author$project$Main$Home};
+var author$project$Main$initialModel = {azr: 0, cheater: '', countdown: 10, difficulty: 1, dontcheat: 0, fehlfunktion: '', hirnzellen: 0, inputContent: '', inputContentRechnung: '', iq: 0, pattern: _List_Nil, rechnung: _List_Nil, screen: author$project$Main$Home};
 var elm$core$Basics$False = {$: 'False'};
 var elm$core$Basics$True = {$: 'True'};
 var elm$core$Result$isOk = function (result) {
@@ -5603,7 +5603,6 @@ var elm$random$Random$list = F2(
 	});
 var author$project$Main$update = F2(
 	function (msg, model) {
-		var szn = ((model.hirnzellen > 9) && ((model.difficulty - model.iq) > 1)) ? '' : 'Hier wird nicht beschissen!';
 		var prüf5 = _Utils_eq(
 			model.inputContent,
 			A2(
@@ -5617,7 +5616,7 @@ var author$project$Main$update = F2(
 		var prüf3 = _Utils_eq(
 			model.inputContentRechnung,
 			elm$core$String$fromInt(
-				elm$core$List$sum(model.rechnung))) ? 10 : model.countdown;
+				elm$core$List$sum(model.rechnung))) ? (10 + model.iq) : model.countdown;
 		var prüf2 = (_Utils_eq(
 			model.inputContentRechnung,
 			elm$core$String$fromInt(
@@ -5632,6 +5631,8 @@ var author$project$Main$update = F2(
 				elm$core$String$join,
 				'',
 				A2(elm$core$List$map, elm$core$String$fromChar, model.pattern))) ? 1 : 0;
+		var enoughornot5 = (model.hirnzellen < 100) ? 'Hier wird nicht beschissen!' : '';
+		var enoughornot4 = ((model.hirnzellen > 9) && ((model.difficulty - model.iq) > 1)) ? '' : 'Hier wird nicht beschissen!';
 		var enoughornot3 = (model.hirnzellen > 99) ? author$project$Main$Gewonnen : author$project$Main$Shop;
 		var enoughornot2 = ((model.hirnzellen > 9) && ((model.difficulty - model.iq) > 1)) ? 10 : 0;
 		var enoughornot = ((model.hirnzellen > 9) && ((model.difficulty - model.iq) > 1)) ? 1 : 0;
@@ -5710,7 +5711,7 @@ var author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{fehlfunktion: '', screen: author$project$Main$Home}),
+						{cheater: '', fehlfunktion: '', screen: author$project$Main$Home}),
 					elm$core$Platform$Cmd$none);
 			case 'ChangeScreenToPattern':
 				return _Utils_Tuple2(
@@ -5733,7 +5734,7 @@ var author$project$Main$update = F2(
 						model,
 						{
 							azr: model.difficulty - model.iq,
-							countdown: 10,
+							countdown: 10 + model.iq,
 							screen: author$project$Main$nextscreen(model.screen)
 						}),
 					A2(
@@ -5753,13 +5754,13 @@ var author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{fehlfunktion: szn, hirnzellen: model.hirnzellen - enoughornot2, iq: model.iq + enoughornot}),
+						{fehlfunktion: enoughornot4, hirnzellen: model.hirnzellen - enoughornot2, iq: model.iq + enoughornot}),
 					elm$core$Platform$Cmd$none);
 			default:
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{screen: enoughornot3}),
+						{cheater: enoughornot5, screen: enoughornot3}),
 					elm$core$Platform$Cmd$none);
 		}
 	});
@@ -5981,14 +5982,16 @@ var author$project$Main$view = function (model) {
 						elm$html$Html$p,
 						_List_fromArray(
 							[
-								A2(elm$html$Html$Attributes$style, 'font-color', 'red')
+								A2(elm$html$Html$Attributes$style, 'font-family', 'Georgia')
 							]),
-						_List_Nil),
-						elm$html$Html$text(
-						A2(
-							elm$core$String$join,
-							'',
-							A2(elm$core$List$map, elm$core$String$fromChar, model.pattern))),
+						_List_fromArray(
+							[
+								elm$html$Html$text(
+								A2(
+									elm$core$String$join,
+									'',
+									A2(elm$core$List$map, elm$core$String$fromChar, model.pattern)))
+							])),
 						A2(elm$html$Html$p, _List_Nil, _List_Nil),
 						elm$html$Html$text(
 						'aktuelle Schwierigkeit: ' + elm$core$String$fromInt(model.difficulty)),
@@ -6159,17 +6162,27 @@ var author$project$Main$view = function (model) {
 								elm$html$Html$text('Gewinne mit 100 Hirnzellen das Spiel')
 							])),
 						A2(elm$html$Html$p, _List_Nil, _List_Nil),
+						elm$html$Html$text(model.cheater),
 						A2(
-						elm$html$Html$button,
-						_Utils_ap(
-							_List_fromArray(
-								[
-									elm$html$Html$Events$onClick(author$project$Main$ChangeScreenToHome)
-								]),
-							buttonstyle),
+						elm$html$Html$p,
 						_List_fromArray(
 							[
-								elm$html$Html$text('Zurück zum Starbildschirm')
+								A2(elm$html$Html$Attributes$style, 'margin', '20px')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$button,
+								_Utils_ap(
+									_List_fromArray(
+										[
+											elm$html$Html$Events$onClick(author$project$Main$ChangeScreenToHome)
+										]),
+									buttonstyle),
+								_List_fromArray(
+									[
+										elm$html$Html$text('Zurück zum Starbildschirm')
+									]))
 							])),
 						A2(elm$html$Html$p, _List_Nil, _List_Nil),
 						elm$html$Html$text(
@@ -6183,11 +6196,21 @@ var author$project$Main$view = function (model) {
 				elm$html$Html$div,
 				A2(
 					elm$core$List$cons,
-					A2(elm$html$Html$Attributes$style, 'margin-top', '300px'),
+					A2(elm$html$Html$Attributes$style, 'margin-top', '150px'),
 					divstyle),
 				_List_fromArray(
 					[
-						elm$html$Html$text('Wow, du hast gewonnen!')
+						elm$html$Html$text('Wow, du hast gewonnen!'),
+						A2(elm$html$Html$p, _List_Nil, _List_Nil),
+						A2(
+						elm$html$Html$img,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$src('Robot.png'),
+								elm$html$Html$Attributes$width(300),
+								elm$html$Html$Attributes$height(300)
+							]),
+						_List_Nil)
 					]));
 	}
 };
