@@ -46,3 +46,7 @@ Packages auf ellie:
 Random  
 Time    
 https://gbbasel.github.io/littlebit-of-big-bamboozled-BOT-bootcamp/
+
+
+
+Abgegeben am 27.02.2019!
